@@ -1,5 +1,5 @@
 use crate::tracking;
-use crate::utils::{resolved_command, tool_exists};
+use crate::utils::{npx_command, resolved_command, tool_exists};
 use anyhow::{Context, Result};
 use std::process::Command;
 
@@ -30,7 +30,7 @@ fn create_prisma_command() -> Command {
     if tool_exists("prisma") {
         resolved_command("prisma")
     } else {
-        let mut c = resolved_command("npx");
+        let mut c = npx_command();
         c.arg("prisma");
         c
     }

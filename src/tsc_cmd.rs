@@ -1,5 +1,5 @@
 use crate::tracking;
-use crate::utils::{resolved_command, tool_exists, truncate};
+use crate::utils::{npx_command, resolved_command, tool_exists, truncate};
 use anyhow::{Context, Result};
 use regex::Regex;
 use std::collections::HashMap;
@@ -13,7 +13,7 @@ pub fn run(args: &[String], verbose: u8) -> Result<()> {
     let mut cmd = if tsc_exists {
         resolved_command("tsc")
     } else {
-        let mut c = resolved_command("npx");
+        let mut c = npx_command();
         c.arg("tsc");
         c
     };

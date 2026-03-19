@@ -1931,7 +1931,7 @@ fn main() -> Result<()> {
                             _ => {
                                 // Passthrough other prisma subcommands
                                 let timer = tracking::TimedExecution::start();
-                                let mut cmd = utils::resolved_command("npx");
+                                let mut cmd = utils::npx_command();
                                 for arg in &args {
                                     cmd.arg(arg);
                                 }
@@ -1948,7 +1948,7 @@ fn main() -> Result<()> {
                         }
                     } else {
                         let timer = tracking::TimedExecution::start();
-                        let status = utils::resolved_command("npx")
+                        let status = utils::npx_command()
                             .arg("prisma")
                             .status()
                             .context("Failed to run npx prisma")?;

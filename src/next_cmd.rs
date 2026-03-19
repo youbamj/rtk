@@ -1,5 +1,5 @@
 use crate::tracking;
-use crate::utils::{resolved_command, strip_ansi, tool_exists, truncate};
+use crate::utils::{npx_command, resolved_command, strip_ansi, tool_exists, truncate};
 use anyhow::{Context, Result};
 use regex::Regex;
 
@@ -12,7 +12,7 @@ pub fn run(args: &[String], verbose: u8) -> Result<()> {
     let mut cmd = if next_exists {
         resolved_command("next")
     } else {
-        let mut c = resolved_command("npx");
+        let mut c = npx_command();
         c.arg("next");
         c
     };

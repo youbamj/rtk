@@ -254,6 +254,13 @@ pub fn package_manager_exec(tool: &str) -> Command {
     }
 }
 
+/// Build a plain `npx` command that auto-approves first-run package installs.
+pub fn npx_command() -> Command {
+    let mut cmd = resolved_command("npx");
+    cmd.arg("-y");
+    cmd
+}
+
 /// Resolve a binary name to its full path, honoring PATHEXT on Windows.
 ///
 /// On Windows, Node.js tools are installed as `.CMD`/`.BAT`/`.PS1` shims.
@@ -319,6 +326,16 @@ pub fn tool_exists(name: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_npx_command_adds_auto_yes_arg() {
+        let cmd = npx_command();
+        let args: Vec<_> = cmd
+            .get_args()
+            .map(|arg| arg.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(args, vec!["-y"]);
+    }
 
     #[test]
     fn test_truncate_short_string() {

@@ -4,7 +4,7 @@
 //! Claude Code API usage metrics. Handles subprocess execution, JSON parsing,
 //! and graceful degradation when ccusage is unavailable.
 
-use crate::utils::{resolved_command, tool_exists};
+use crate::utils::{npx_command, resolved_command, tool_exists};
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::process::Command;
@@ -95,7 +95,7 @@ fn build_command() -> Option<Command> {
     }
 
     // Fallback: try npx
-    let npx_check = resolved_command("npx")
+    let npx_check = npx_command()
         .arg("ccusage")
         .arg("--help")
         .stdout(std::process::Stdio::null())
@@ -103,7 +103,7 @@ fn build_command() -> Option<Command> {
         .status();
 
     if npx_check.map(|s| s.success()).unwrap_or(false) {
-        let mut cmd = resolved_command("npx");
+        let mut cmd = npx_command();
         cmd.arg("ccusage");
         return Some(cmd);
     }
