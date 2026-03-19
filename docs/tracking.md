@@ -539,7 +539,7 @@ let _ = conn.execute(
 ## Security & Privacy
 
 - **Local storage only**: Database never leaves the machine
-- **No telemetry**: RTK does not phone home or send analytics
+- **Telemetry is opt-in**: RTK only sends anonymous telemetry after explicit user opt-in
 - **User control**: Users can delete `~/.local/share/rtk/tracking.db` anytime
 - **90-day retention**: Old data automatically purged
 

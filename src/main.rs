@@ -1242,7 +1242,7 @@ fn shell_split(input: &str) -> Vec<String> {
 }
 
 fn main() -> Result<()> {
-    // Fire-and-forget telemetry ping (1/day, non-blocking)
+    // Fire-and-forget telemetry ping (opt-in, 1/day, non-blocking)
     telemetry::maybe_ping();
 
     let cli = match Cli::try_parse() {

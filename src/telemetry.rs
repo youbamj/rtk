@@ -15,13 +15,11 @@ pub fn maybe_ping() {
         return;
     }
 
-    // Check opt-out: env var
-    if std::env::var("RTK_TELEMETRY_DISABLED").unwrap_or_default() == "1" {
-        return;
-    }
-
-    // Check opt-out: config.toml
-    if let Some(false) = config::telemetry_enabled() {
+    if !telemetry_opted_in(
+        config::telemetry_enabled(),
+        std::env::var("RTK_TELEMETRY_ENABLED").ok().as_deref(),
+        std::env::var("RTK_TELEMETRY_DISABLED").ok().as_deref(),
+    ) {
         return;
     }
 
@@ -44,6 +42,22 @@ pub fn maybe_ping() {
     std::thread::spawn(|| {
         let _ = send_ping();
     });
+}
+
+fn telemetry_opted_in(
+    config_enabled: Option<bool>,
+    env_enabled: Option<&str>,
+    env_disabled: Option<&str>,
+) -> bool {
+    if env_disabled == Some("1") {
+        return false;
+    }
+
+    if env_enabled == Some("1") {
+        return true;
+    }
+
+    matches!(config_enabled, Some(true))
 }
 
 fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
@@ -244,5 +258,24 @@ mod tests {
         if let Some(p) = pct {
             assert!((0.0..=100.0).contains(&p));
         }
+    }
+
+    #[test]
+    fn test_telemetry_opted_in_defaults_to_disabled() {
+        assert!(!telemetry_opted_in(None, None, None));
+        assert!(!telemetry_opted_in(Some(false), None, None));
+    }
+
+    #[test]
+    fn test_telemetry_opted_in_accepts_config_or_env() {
+        assert!(telemetry_opted_in(Some(true), None, None));
+        assert!(telemetry_opted_in(None, Some("1"), None));
+        assert!(telemetry_opted_in(Some(false), Some("1"), None));
+    }
+
+    #[test]
+    fn test_telemetry_disabled_env_overrides_opt_in() {
+        assert!(!telemetry_opted_in(Some(true), None, Some("1")));
+        assert!(!telemetry_opted_in(Some(true), Some("1"), Some("1")));
     }
 }

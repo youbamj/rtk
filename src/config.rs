@@ -85,15 +85,9 @@ impl Default for FilterConfig {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct TelemetryConfig {
     pub enabled: bool,
-}
-
-impl Default for TelemetryConfig {
-    fn default() -> Self {
-        Self { enabled: true }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -205,6 +199,12 @@ exclude_commands = ["curl", "gh"]
     fn test_hooks_config_default_empty() {
         let config = Config::default();
         assert!(config.hooks.exclude_commands.is_empty());
+    }
+
+    #[test]
+    fn test_telemetry_defaults_to_opt_in_disabled() {
+        let config = Config::default();
+        assert!(!config.telemetry.enabled);
     }
 
     #[test]
